@@ -104,7 +104,6 @@
             font-size: 16px;
             cursor: pointer;
             margin-top: 20px;
-            display: none;
             text-decoration: none;
             display: inline-block;
         }
@@ -112,6 +111,7 @@
         .button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
         }
 
         .details {
@@ -134,6 +134,28 @@
             font-weight: 600;
             color: #333;
         }
+
+        .progress {
+            width: 100%;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            animation: progress 2s ease-in-out;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -141,6 +163,10 @@
         <div class="logo">📸</div>
         <h1>Team Criativa</h1>
         <p class="status" id="status">Processando autorização...</p>
+        
+        <div class="progress" id="progress">
+            <div class="progress-bar"></div>
+        </div>
         
         <div class="loader" id="loader"></div>
         <div class="success" id="success">✓</div>
@@ -150,16 +176,12 @@
         
         <div class="details" id="details">
             <div class="details-item">
-                <span class="details-label">Cliente ID:</span>
-                <span id="clientId"></span>
-            </div>
-            <div class="details-item">
-                <span class="details-label">Conta Instagram:</span>
-                <span id="instagramAccount"></span>
-            </div>
-            <div class="details-item">
                 <span class="details-label">Status:</span>
                 <span id="detailStatus"></span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Processado em:</span>
+                <span id="processedAt"></span>
             </div>
         </div>
         
@@ -173,7 +195,9 @@
             clientSecret: 'abae95ef7bda4062c4dd30a1eec2ae46',
             redirectUri: 'https://callback.teamcriativa.com',
             supabaseUrl: 'https://owpboqevrtthsupugcrt.supabase.co',
-            supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGJvcWV2cnR0aHN1cHVnY3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjY4MDQsImV4cCI6MjA2OTUwMjgwNH0.7RjkVOUT6ByewP0D6FgHQjZDCoi4GYnGT6BMj794MfQ'
+            supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGJvcWV2cnR0aHN1cHVnY3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjY4MDQsImV4cCI6MjA2OTUwMjgwNH0.7RjkVOUT6ByewP0D6FgHQjZDCoi4GYnGT6BMj794MfQ',
+            // URL da sua Edge Function (você vai criar isso)
+            edgeFunctionUrl: 'https://owpboqevrtthsupugcrt.supabase.co/functions/v1/instagram-oauth'
         };
 
         const { createClient } = supabase;
@@ -182,6 +206,7 @@
         const elements = {
             status: document.getElementById('status'),
             loader: document.getElementById('loader'),
+            progress: document.getElementById('progress'),
             success: document.getElementById('success'),
             error: document.getElementById('error'),
             message: document.getElementById('message'),
@@ -191,6 +216,7 @@
 
         function showSuccess(msg, detailsData = null) {
             elements.loader.style.display = 'none';
+            elements.progress.style.display = 'none';
             elements.success.style.display = 'block';
             elements.status.textContent = 'Conectado com sucesso!';
             elements.message.textContent = msg;
@@ -198,15 +224,15 @@
             elements.closeButton.style.display = 'inline-block';
             
             if (detailsData) {
-                document.getElementById('clientId').textContent = detailsData.clientId || 'N/A';
-                document.getElementById('instagramAccount').textContent = detailsData.instagramAccount || 'Carregando...';
-                document.getElementById('detailStatus').textContent = 'Ativo';
+                document.getElementById('detailStatus').textContent = detailsData.status || 'Ativo';
+                document.getElementById('processedAt').textContent = new Date().toLocaleString('pt-BR');
                 elements.details.style.display = 'block';
             }
         }
 
         function showError(msg) {
             elements.loader.style.display = 'none';
+            elements.progress.style.display = 'none';
             elements.error.style.display = 'block';
             elements.status.textContent = 'Erro na conexão';
             elements.message.textContent = msg;
@@ -216,69 +242,77 @@
             elements.closeButton.style.display = 'inline-block';
         }
 
-        async function exchangeCodeForToken(code) {
-            const url = `https://api.instagram.com/oauth/access_token`;
-            
-            const formData = new FormData();
-            formData.append('client_id', CONFIG.clientId);
-            formData.append('client_secret', CONFIG.clientSecret);
-            formData.append('grant_type', 'authorization_code');
-            formData.append('redirect_uri', CONFIG.redirectUri);
-            formData.append('code', code);
-
-            const response = await fetch(url, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error_message || 'Erro ao trocar código por token');
-            }
-
-            return await response.json();
-        }
-
-        async function getLongLivedToken(shortToken) {
-            const url = `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${CONFIG.clientSecret}&access_token=${shortToken}`;
-            
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                throw new Error('Erro ao obter token de longa duração');
-            }
-
-            return await response.json();
-        }
-
-        async function getInstagramAccountInfo(accessToken, userId) {
-            const url = `https://graph.instagram.com/${userId}?fields=id,username,account_type&access_token=${accessToken}`;
-            
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                return null;
-            }
-
-            return await response.json();
-        }
-
-        async function saveToSupabase(data) {
-            const { data: result, error } = await supabaseClient
-                .from('instagram_accounts')
-                .upsert({
-                    user_id: data.userId,
-                    username: data.username,
-                    access_token: data.accessToken,
-                    token_expires_at: data.expiresAt,
-                    account_type: data.accountType,
-                    updated_at: new Date().toISOString()
-                }, {
-                    onConflict: 'user_id'
+        async function processOAuthCode(code) {
+            // Tenta usar a Edge Function primeiro
+            try {
+                const response = await fetch(CONFIG.edgeFunctionUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CONFIG.supabaseKey}`
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        client_id: CONFIG.clientId,
+                        client_secret: CONFIG.clientSecret,
+                        redirect_uri: CONFIG.redirectUri
+                    })
                 });
 
-            if (error) throw error;
-            return result;
+                if (!response.ok) {
+                    throw new Error('Edge Function não disponível');
+                }
+
+                return await response.json();
+            } catch (err) {
+                // Se a Edge Function não existir, salva o código para processamento posterior
+                console.log('Edge Function não disponível, salvando código...');
+                
+                const { data, error } = await supabaseClient
+                    .from('instagram_auth_codes')
+                    .insert({
+                        code: code,
+                        client_id: CONFIG.clientId,
+                        redirect_uri: CONFIG.redirectUri,
+                        status: 'pending',
+                        created_at: new Date().toISOString()
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                // Aguarda processamento (polling)
+                return await waitForProcessing(data.id);
+            }
+        }
+
+        async function waitForProcessing(authId, maxAttempts = 30) {
+            for (let i = 0; i < maxAttempts; i++) {
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Aguarda 2s
+
+                const { data, error } = await supabaseClient
+                    .from('instagram_auth_codes')
+                    .select('*')
+                    .eq('id', authId)
+                    .single();
+
+                if (error) throw error;
+
+                if (data.status === 'completed') {
+                    return {
+                        success: true,
+                        username: data.username,
+                        user_id: data.user_id
+                    };
+                } else if (data.status === 'failed') {
+                    throw new Error(data.error_message || 'Falha no processamento');
+                }
+
+                elements.status.textContent = `Aguardando processamento... (${i + 1}/${maxAttempts})`;
+            }
+
+            throw new Error('Tempo limite excedido. Por favor, entre em contato com o suporte.');
         }
 
         async function handleCallback() {
@@ -299,43 +333,26 @@
             }
 
             try {
-                elements.status.textContent = 'Obtendo token de acesso...';
-                const tokenData = await exchangeCodeForToken(code);
+                elements.progress.style.display = 'block';
+                elements.status.textContent = 'Conectando com o Instagram...';
                 
-                elements.status.textContent = 'Gerando token de longa duração...';
-                const longLivedToken = await getLongLivedToken(tokenData.access_token);
-                
-                elements.status.textContent = 'Obtendo informações da conta...';
-                const accountInfo = await getInstagramAccountInfo(
-                    longLivedToken.access_token, 
-                    tokenData.user_id
-                );
+                const result = await processOAuthCode(code);
 
-                const expiresAt = new Date();
-                expiresAt.setSeconds(expiresAt.getSeconds() + longLivedToken.expires_in);
+                if (result.success) {
+                    showSuccess(
+                        `Sua conta do Instagram${result.username ? ' (@' + result.username + ')' : ''} foi conectada com sucesso! Agora você pode postar através do nosso aplicativo.`,
+                        {
+                            status: 'Conectado',
+                            username: result.username
+                        }
+                    );
 
-                const dataToSave = {
-                    userId: tokenData.user_id,
-                    username: accountInfo?.username || 'Desconhecido',
-                    accessToken: longLivedToken.access_token,
-                    expiresAt: expiresAt.toISOString(),
-                    accountType: accountInfo?.account_type || 'BUSINESS'
-                };
-
-                elements.status.textContent = 'Salvando informações...';
-                await saveToSupabase(dataToSave);
-
-                showSuccess(
-                    'Sua conta do Instagram foi conectada com sucesso! Agora você pode postar através do nosso aplicativo.',
-                    {
-                        clientId: CONFIG.clientId,
-                        instagramAccount: accountInfo?.username || 'Conta conectada'
-                    }
-                );
-
-                setTimeout(() => {
-                    window.close();
-                }, 5000);
+                    setTimeout(() => {
+                        window.close();
+                    }, 5000);
+                } else {
+                    throw new Error(result.error || 'Erro desconhecido');
+                }
 
             } catch (err) {
                 console.error('Erro:', err);
@@ -348,6 +365,7 @@
             window.close();
         });
 
+        // Inicia o processamento
         handleCallback();
     </script>
 </body>
