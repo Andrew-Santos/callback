@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticação Instagram Business</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen">
+    <div class="p-8">
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Autenticação Instagram Business</h1>
+                    <p class="text-gray-600">Conecte sua conta para começar a usar a API</p>
+                </div>
+
+                <!-- Container de conteúdo dinâmico -->
+                <div id="content"></div>
+            </div>
+
+            <!-- Info box -->
+            <div class="mt-6 bg-white rounded-lg shadow p-4">
+                <h3 class="font-semibold text-gray-800 mb-2">📋 Fluxo de autenticação:</h3>
+                <ol class="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+                    <li>Usuário autoriza a aplicação no Instagram</li>
+                    <li>Instagram redireciona com código de autorização</li>
+                    <li>Sistema troca código por token de curta duração</li>
+                    <li>Token é convertido para longa duração (60 dias)</li>
+                    <li>Busca informações do perfil</li>
+                    <li>Salva tudo no Supabase</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⚙️ CONFIGURAÇÕES - PREENCHA COM SEUS DADOS
+        const CONFIG = {
+            clientId: '1574570113515856',
+            clientSecret: 'abae95ef7bda4062c4dd30a1eec2ae46', // Obtenha no Facebook Developer
+            redirectUri: 'https://callback.teamcriativa.com',
+            supabaseUrl: 'https://owpboqevrtthsupugcrt.supabase.co',
+            supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGJvcWV2cnR0aHN1cHVnY3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjY4MDQsImV4cCI6MjA2OTUwMjgwNH0.7RjkVOUT6ByewP0D6FgHQjZDCoi4GYnGT6BMj794MfQ'
+        };
+
+        const content = document.getElementById('content');
+
+        // Função para mostrar tela inicial
+        function showInitialScreen() {
+            content.innerHTML = `
+                <div class="space-y-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h3 class="font-semibold text-blue-900 mb-2">⚙️ Antes de começar:</h3>
+                        <ol class="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                            <li>Configure as variáveis no código (Client Secret, Supabase URL e Key)</li>
+                            <li>Certifique-se que a URL de callback está configurada no Facebook Developer</li>
+                            <li>Sua conta deve ser do tipo Business ou Creator</li>
+                        </ol>
+                    </div>
+                    
+                    <button onclick="startAuth()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-4 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-lg">
+                        Conectar com Instagram
+                    </button>
+                </div>
+            `;
+        }
+
+        // Função para mostrar loading
+        function showLoading(message) {
+            content.innerHTML = `
+                <div class="text-center py-8">
+                    <svg class="w-12 h-12 text-purple-500 animate-spin mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <p class="text-gray-700 font-medium">${message}</p>
+                    <p class="text-gray-500 text-sm mt-2">Isso pode levar alguns segundos...</p>
+                </div>
+            `;
+        }
+
+        // Função para mostrar sucesso
+        function showSuccess(userData) {
+            content.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-center text-green-600 mb-4">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <p class="text-center text-green-700 font-semibold text-lg">Autenticação concluída com sucesso!</p>
+                    
+                    <div class="bg-gray-50 rounded-lg p-6 space-y-3">
+                        <h3 class="font-semibold text-gray-800 mb-3">Dados salvos:</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Usuário:</span>
+                                <span class="font-medium text-gray-800">@${userData.users}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">ID Instagram:</span>
+                                <span class="font-medium text-gray-800">${userData.id_instagram}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Token válido até:</span>
+                                <span class="font-medium text-gray-800">
+                                    ${new Date(userData.validade_token).toLocaleDateString('pt-BR')}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="location.reload()" class="w-full bg-gray-200 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-300 transition-colors">
+                        Conectar outra conta
+                    </button>
+                </div>
+            `;
+        }
+
+        // Função para mostrar erro
+        function showError(errorMessage) {
+            content.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-center text-red-600 mb-4">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <p class="text-red-800 font-semibold mb-2">Erro na autenticação:</p>
+                        <p class="text-red-700 text-sm">${errorMessage}</p>
+                    </div>
+                    
+                    <button onclick="location.reload()" class="w-full bg-red-100 text-red-700 font-semibold py-3 rounded-lg hover:bg-red-200 transition-colors">
+                        Tentar novamente
+                    </button>
+                </div>
+            `;
+        }
+
+        // Função para iniciar autenticação
+        function startAuth() {
+            const authUrl = `https://www.instagram.com/oauth/authorize?force_reauth=true&client_id=${CONFIG.clientId}&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}&response_type=code&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish,instagram_business_manage_insights`;
+            window.location.href = authUrl;
+        }
+
+        // Função para processar o código de autorização
+        async function handleAuthorizationCode(code) {
+            try {
+                showLoading('Obtendo token de acesso...');
+
+                // 1. Trocar código por token de acesso (short-lived)
+                const tokenResponse = await fetch('https://api.instagram.com/oauth/access_token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        client_id: CONFIG.clientId,
+                        client_secret: CONFIG.clientSecret,
+                        grant_type: 'authorization_code',
+                        redirect_uri: CONFIG.redirectUri,
+                        code: code,
+                    }),
+                });
+
+                const tokenData = await tokenResponse.json();
+
+                if (!tokenResponse.ok) {
+                    throw new Error(tokenData.error_message || 'Erro ao obter token');
+                }
+
+                const shortLivedToken = tokenData.access_token;
+                const userId = tokenData.user_id;
+
+                showLoading('Convertendo para token de longa duração...');
+
+                // 2. Converter para long-lived token (60 dias)
+                const longLivedResponse = await fetch(
+                    `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${CONFIG.clientSecret}&access_token=${shortLivedToken}`
+                );
+
+                const longLivedData = await longLivedResponse.json();
+
+                if (!longLivedResponse.ok) {
+                    throw new Error(longLivedData.error?.message || 'Erro ao converter token');
+                }
+
+                const longLivedToken = longLivedData.access_token;
+                const expiresIn = longLivedData.expires_in;
+
+                showLoading('Buscando informações do perfil...');
+
+                // 3. Buscar informações do perfil
+                const profileResponse = await fetch(
+                    `https://graph.instagram.com/me?fields=id,username,account_type,media_count&access_token=${longLivedToken}`
+                );
+
+                const profileData = await profileResponse.json();
+
+                if (!profileResponse.ok) {
+                    throw new Error(profileData.error?.message || 'Erro ao buscar perfil');
+                }
+
+                // 4. Tentar buscar foto do perfil
+                let profilePhoto = null;
+                try {
+                    const photoResponse = await fetch(
+                        `https://graph.facebook.com/v18.0/${userId}?fields=profile_pic&access_token=${longLivedToken}`
+                    );
+                    const photoData = await photoResponse.json();
+                    profilePhoto = photoData.profile_pic || null;
+                } catch (e) {
+                    console.log('Não foi possível obter foto do perfil');
+                }
+
+                // Calcular data de validade do token
+                const validadeToken = new Date(Date.now() + expiresIn * 1000).toISOString();
+
+                const userData = {
+                    users: profileData.username,
+                    profile_photo: profilePhoto,
+                    id_instagram: profileData.id,
+                    access_token: longLivedToken,
+                    validade_token: validadeToken
+                };
+
+                showLoading('Salvando no Supabase...');
+
+                // 5. Salvar no Supabase
+                await saveToSupabase(userData);
+
+                showSuccess(userData);
+
+            } catch (error) {
+                console.error('Erro:', error);
+                showError(error.message);
+            }
+        }
+
+        // Função para salvar no Supabase
+        async function saveToSupabase(data) {
+            const response = await fetch(`${CONFIG.supabaseUrl}/rest/v1/client`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': CONFIG.supabaseKey,
+                    'Authorization': `Bearer ${CONFIG.supabaseKey}`,
+                    'Prefer': 'return=representation'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao salvar no Supabase');
+            }
+
+            return response.json();
+        }
+
+        // Inicialização
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+
+            if (error) {
+                showError('Autorização negada pelo usuário');
+                return;
+            }
+
+            if (code) {
+                handleAuthorizationCode(code);
+            } else {
+                showInitialScreen();
+            }
+        };
+    </script>
+</body>
+</html>
