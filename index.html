@@ -176,7 +176,8 @@
             supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGJvcWV2cnR0aHN1cHVnY3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjY4MDQsImV4cCI6MjA2OTUwMjgwNH0.7RjkVOUT6ByewP0D6FgHQjZDCoi4GYnGT6BMj794MfQ'
         };
 
-        const supabase = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+        const { createClient } = supabase;
+        const supabaseClient = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
 
         const elements = {
             status: document.getElementById('status'),
@@ -263,7 +264,7 @@
         }
 
         async function saveToSupabase(data) {
-            const { data: result, error } = await supabase
+            const { data: result, error } = await supabaseClient
                 .from('instagram_accounts')
                 .upsert({
                     user_id: data.userId,
