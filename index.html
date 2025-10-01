@@ -212,10 +212,11 @@
             
             <div class="input-group">
                 <label for="redirectUri">URL de Redirecionamento</label>
-                <input type="text" id="redirectUri" value="https://localhost/" 
+                <input type="text" id="redirectUri" value="https://callback.teamcriativa.com" 
                        placeholder="Ex: https://seusite.com/callback">
                 <small style="color: #666; display: block; margin-top: 5px;">
-                    ⚠️ Esta URL deve estar configurada no seu App do Facebook
+                    ⚠️ Esta URL já está configurada no seu App do Facebook<br>
+                    💡 <strong>Hospede esta página nesta URL</strong> para capturar o código automaticamente
                 </small>
             </div>
 
@@ -260,7 +261,7 @@
 
             <div class="input-group">
                 <label for="redirectUriToken">URL de Redirecionamento (mesma usada antes)</label>
-                <input type="text" id="redirectUriToken" value="https://localhost/">
+                <input type="text" id="redirectUriToken" value="https://callback.teamcriativa.com">
             </div>
 
             <button class="btn" onclick="getAccessToken()">🔑 Obter Access Token</button>
@@ -389,11 +390,42 @@
         const APP_ID = '2633543703653982';
         let generatedAuthUrl = '';
 
+        // Ao carregar a página, verificar se tem code na URL
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+            const errorDescription = urlParams.get('error_description');
+
+            if (error) {
+                switchTab('token');
+                showError('tokenError', `${error}: ${errorDescription || 'Autorização negada'}`);
+            } else if (code) {
+                // Code encontrado! Preencher automaticamente
+                document.getElementById('authCode').value = code;
+                switchTab('token');
+                
+                // Mostrar mensagem de sucesso
+                const successMsg = document.createElement('div');
+                successMsg.className = 'success-box';
+                successMsg.innerHTML = '<strong>✅ Código capturado automaticamente!</strong><br>Agora insira o App Secret e clique em "Obter Access Token"';
+                document.getElementById('token').insertBefore(successMsg, document.getElementById('token').firstChild);
+                
+                // Focar no campo App Secret
+                document.getElementById('appSecret').focus();
+            }
+        };
+
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
-            event.target.classList.add('active');
+            const tabs = ['auth', 'token', 'post', 'setup'];
+            const index = tabs.indexOf(tabName);
+            if (index !== -1) {
+                document.querySelectorAll('.tab')[index].classList.add('active');
+            }
+            
             document.getElementById(tabName).classList.add('active');
         }
 
