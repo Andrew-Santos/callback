@@ -1,355 +1,230 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Autorizar Postagens no Instagram</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-    
-    body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    
-    .container {
-      background: white;
-      border-radius: 20px;
-      padding: 40px;
-      max-width: 600px;
-      width: 100%;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-    
-    h1 {
-      color: #333;
-      margin-bottom: 10px;
-      font-size: 28px;
-    }
-    
-    .subtitle {
-      color: #666;
-      margin-bottom: 30px;
-      font-size: 16px;
-    }
-    
-    .steps {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-    }
-    
-    .step {
-      display: flex;
-      align-items: start;
-      margin-bottom: 15px;
-    }
-    
-    .step:last-child {
-      margin-bottom: 0;
-    }
-    
-    .step-number {
-      background: #667eea;
-      color: white;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 14px;
-      flex-shrink: 0;
-      margin-right: 12px;
-    }
-    
-    .step-text {
-      color: #333;
-      font-size: 15px;
-      line-height: 1.5;
-    }
-    
-    .status {
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      display: none;
-    }
-    
-    .status.loading {
-      background: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeaa7;
-      display: block;
-    }
-    
-    .status.success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      display: block;
-    }
-    
-    .status.error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      display: block;
-    }
-    
-    button {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    
-    button:hover:not(:disabled) {
-      transform: translateY(-2px);
-    }
-    
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    
-    .result {
-      background: #e7f3ff;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
-      display: none;
-    }
-    
-    .result.show {
-      display: block;
-    }
-    
-    .result h3 {
-      color: #004085;
-      margin-bottom: 15px;
-      font-size: 18px;
-    }
-    
-    .result-item {
-      margin-bottom: 12px;
-    }
-    
-    .result-label {
-      font-weight: 600;
-      color: #004085;
-      display: block;
-      margin-bottom: 4px;
-      font-size: 13px;
-    }
-    
-    .result-value {
-      background: white;
-      padding: 10px;
-      border-radius: 6px;
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
-      word-break: break-all;
-      color: #333;
-    }
-    
-    .loader {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #667eea;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-      margin-right: 10px;
-      vertical-align: middle;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .warning {
-      background: #fff3cd;
-      border: 1px solid #ffeaa7;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-      font-size: 14px;
-      color: #856404;
-    }
-    
-    .warning strong {
-      display: block;
-      margin-bottom: 5px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autorização Instagram Business</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .auth-link {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-size: 13px;
+            color: #667eea;
+            border: 2px solid #667eea;
+            margin: 15px 0;
+        }
+        .copy-btn {
+            background: #28a745;
+            padding: 10px 20px;
+            width: auto;
+            margin-top: 10px;
+        }
+        .copy-btn:hover {
+            background: #218838;
+        }
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #856404;
+        }
+        .step {
+            background: #e8f4f8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .step-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Autorizar Postagens</h1>
-    <p class="subtitle">Autorize o acesso para que possamos postar em seu Instagram Business</p>
-    
-    <div class="steps">
-      <div class="step">
-        <div class="step-number">1</div>
-        <div class="step-text">Clique no botão abaixo para conectar sua conta</div>
-      </div>
-      <div class="step">
-        <div class="step-number">2</div>
-        <div class="step-text">Faça login com sua conta do Facebook conectada ao Instagram</div>
-      </div>
-      <div class="step">
-        <div class="step-number">3</div>
-        <div class="step-text">Autorize as permissões solicitadas</div>
-      </div>
-      <div class="step">
-        <div class="step-number">4</div>
-        <div class="step-text">Pronto! Poderemos postar em sua conta</div>
-      </div>
+    <div class="container">
+        <h1>🔐 Autorização Instagram Business</h1>
+        <p class="subtitle">Configure sua aplicação do Meta for Developers</p>
+
+        <div class="info-box">
+            <strong>⚠️ Importante:</strong> Antes de usar, você precisa:
+            <br>1. Criar um App em developers.facebook.com
+            <br>2. Adicionar o produto "Instagram Graph API"
+            <br>3. Copiar seu App ID e App Secret
+        </div>
+
+        <div class="input-group">
+            <label for="appId">App ID (do Meta for Developers)</label>
+            <input type="text" id="appId" placeholder="Ex: 123456789012345">
+        </div>
+
+        <div class="input-group">
+            <label for="redirectUri">URL de Redirecionamento</label>
+            <input type="text" id="redirectUri" value="https://localhost/" placeholder="Ex: https://seusite.com/callback">
+        </div>
+
+        <button class="btn" onclick="generateAuthUrl()">🚀 Gerar Link de Autorização</button>
+
+        <div class="result" id="result">
+            <h3 style="color: #333; margin-bottom: 15px;">✅ Link Gerado!</h3>
+            <div class="auth-link" id="authLink"></div>
+            <button class="btn copy-btn" onclick="copyLink()">📋 Copiar Link</button>
+            
+            <div class="step" style="margin-top: 20px;">
+                <div class="step-title">📱 Próximos Passos:</div>
+                1. Envie este link para seu cliente<br>
+                2. Cliente faz login no Instagram Business<br>
+                3. Cliente autoriza seu app<br>
+                4. Ele será redirecionado com um CODE na URL<br>
+                5. Use esse CODE para obter o Access Token
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-title">🔧 Configurar no Meta for Developers:</div>
+            1. Vá em "Configurações do App" → "Básico"<br>
+            2. Em "Domínios do App", adicione seu domínio<br>
+            3. Em "URIs de Redirecionamento OAuth Válidos", adicione a URL acima<br>
+            4. Ative o app (tire do modo desenvolvimento se necessário)
+        </div>
     </div>
-    
-    <div id="status" class="status"></div>
-    
-    <button id="authBtn">
-      Conectar Instagram Business
-    </button>
-    
-    <div id="result" class="result"></div>
-    
-    <div class="warning">
-      <strong>Requisitos:</strong>
-      Sua conta do Instagram deve ser Business ou Creator e estar conectada a uma Página do Facebook.
-    </div>
-  </div>
 
-  <script>
-    // CONFIGURAÇÃO - ATUALIZE COM SUAS CREDENCIAIS
-    const CONFIG = {
-      appId: '2633543703653982',
-      redirectUri: 'https://callback.teamcriativa.com/',
-      scope: 'pages_show_list,pages_read_engagement,instagram_basic,instagram_content_publish',
-      supabaseUrl: 'https://owpboqevrtthsupugcrt.supabase.co',
-      supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGJvcWV2cnR0aHN1cHVnY3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjY4MDQsImV4cCI6MjA2OTUwMjgwNH0.7RjkVOUT6ByewP0D6FgHQjZDCoi4GYnGT6BMj794MfQ'
-    };
+    <script>
+        function generateAuthUrl() {
+            const appId = document.getElementById('appId').value.trim();
+            const redirectUri = document.getElementById('redirectUri').value.trim();
+            
+            if (!appId) {
+                alert('Por favor, insira o App ID');
+                return;
+            }
+            
+            if (!redirectUri) {
+                alert('Por favor, insira a URL de redirecionamento');
+                return;
+            }
 
-    const statusEl = document.getElementById('status');
-    const authBtn = document.getElementById('authBtn');
-    const resultEl = document.getElementById('result');
+            // Escopos necessários para postar no Instagram Business
+            const scopes = [
+                'instagram_basic',
+                'instagram_content_publish',
+                'pages_show_list',
+                'pages_read_engagement'
+            ].join(',');
 
-    function showStatus(message, type = 'loading') {
-      statusEl.className = `status ${type}`;
-      statusEl.innerHTML = type === 'loading' 
-        ? `<div class="loader"></div>${message}`
-        : message;
-    }
+            const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?` +
+                `client_id=${encodeURIComponent(appId)}` +
+                `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+                `&scope=${encodeURIComponent(scopes)}` +
+                `&response_type=code`;
 
-    function showResult(data) {
-      resultEl.className = 'result show';
-      resultEl.innerHTML = `
-        <h3>Autorização Concluída!</h3>
-        <div class="result-item">
-          <span class="result-label">Username:</span>
-          <div class="result-value">@${data.username}</div>
-        </div>
-        <div class="result-item">
-          <span class="result-label">Instagram User ID:</span>
-          <div class="result-value">${data.id}</div>
-        </div>
-        <div class="result-item">
-          <span class="result-label">Token válido até:</span>
-          <div class="result-value">${data.token_expires_at ? new Date(data.token_expires_at).toLocaleString('pt-BR') : 'Token de longa duração (60 dias)'}</div>
-        </div>
-        <p style="margin-top: 15px; color: #155724; font-size: 14px;">
-          O token de acesso foi salvo no banco de dados e você já pode fazer postagens nesta conta!
-        </p>
-      `;
-    }
-
-    function startAuth() {
-      const authUrl = `https://www.facebook.com/v23.0/dialog/oauth?` + 
-        `client_id=${CONFIG.appId}` +
-        `&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}` +
-        `&scope=${CONFIG.scope}` +
-        `&response_type=code`;
-      
-      console.log('Redirecionando para autorização...');
-      console.log('App ID:', CONFIG.appId);
-      console.log('Redirect URI:', CONFIG.redirectUri);
-      
-      window.location.href = authUrl;
-    }
-
-    async function processCode(code) {
-      showStatus('Processando autorização...', 'loading');
-      authBtn.disabled = true;
-      
-      console.log('Enviando código para o servidor...');
-
-      try {
-        const response = await fetch(`${CONFIG.supabaseUrl}/functions/v1/instagram-oauth`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': CONFIG.supabaseKey,
-            'Authorization': `Bearer ${CONFIG.supabaseKey}`
-          },
-          body: JSON.stringify({ 
-            code,
-            redirect_uri: CONFIG.redirectUri
-          })
-        });
-
-        const data = await response.json();
-        console.log('Resposta do servidor:', data);
-
-        if (data.success) {
-          showStatus('Autorização concluída com sucesso!', 'success');
-          showResult(data.user);
-        } else {
-          throw new Error(data.error || 'Erro desconhecido');
+            document.getElementById('authLink').textContent = authUrl;
+            document.getElementById('result').classList.add('show');
         }
-      } catch (error) {
-        console.error('Erro:', error);
-        showStatus(`Erro: ${error.message}`, 'error');
-        authBtn.disabled = false;
-      }
-    }
 
-    // Inicialização
-    window.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      const error = urlParams.get('error');
-      const errorDescription = urlParams.get('error_description');
-
-      if (error) {
-        showStatus(`Erro: ${errorDescription || error}`, 'error');
-      } else if (code) {
-        processCode(code);
-      } else {
-        authBtn.onclick = startAuth;
-      }
-    });
-  </script>
+        function copyLink() {
+            const link = document.getElementById('authLink').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copiado!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>
