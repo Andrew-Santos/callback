@@ -1,215 +1,270 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram - Conectando...</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            color: white;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .status {
-            color: #666;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            margin: 0 auto;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .success {
-            color: #10b981;
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-
-        .error {
-            color: #ef4444;
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-
-        .details {
-            background: #f9fafb;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #666;
-            text-align: left;
-        }
-
-        .button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Login - Callback</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    
+    .status {
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .status.loading {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .info {
+      background: #e7f3ff;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #004085;
+    }
+    
+    .info strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .info code {
+      background: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      word-break: break-all;
+    }
+    
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+    }
+    
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .loader {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">📸</div>
-        <h1 id="title">Conectando Instagram...</h1>
-        <p class="status" id="status">Aguarde enquanto processamos sua autenticação</p>
-        <div class="spinner" id="spinner"></div>
-        <div id="result"></div>
+  <div class="container">
+    <h1>🔐 Instagram OAuth</h1>
+    
+    <div id="status" class="status loading">
+      <div class="loader"></div>
+      Processando autenticação...
     </div>
+    
+    <div id="info" class="info" style="display: none;"></div>
+    
+    <button id="loginBtn" style="display: none;">
+      Fazer Login com Instagram
+    </button>
+    
+    <button id="retryBtn" style="display: none;" onclick="window.location.href = window.location.origin + window.location.pathname">
+      Tentar Novamente
+    </button>
+  </div>
 
-    <script>
-        const CONFIG = {
-            edgeFunctionUrl: 'https://owpboqevrtthsupugcrt.supabase.co/functions/v1/instagram-oauth',
-            clientId: '1574570113515856',
-            redirectUri: 'https://callback.teamcriativa.com/', // COM barra
-            supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGJvcWV2cnR0aHN1cHVnY3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjY4MDQsImV4cCI6MjA2OTUwMjgwNH0.7RjkVOUT6ByewP0D6FgHQjZDCoi4GYnGT6BMj794MfQ'
-        };
+  <script>
+    // ===== CONFIGURAÇÃO =====
+    const CONFIG = {
+      appId: '2633543703653982',
+      redirectUri: 'https://callback.teamcriativa.com/', // IMPORTANTE: Deve ser EXATAMENTE igual ao configurado no Facebook
+      scope: 'instagram_basic,pages_show_list,pages_read_engagement',
+      supabaseUrl: 'https://owpboqevrtthsupugcrt.supabase.co',
+      supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGJvcWV2cnR0aHN1cHVnY3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjY4MDQsImV4cCI6MjA2OTUwMjgwNH0.7RjkVOUT6ByewP0D6FgHQjZDCoi4GYnGT6BMj794MfQ'
+    };
 
-        async function handleCallback() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-            const error = urlParams.get('error');
-            const errorDescription = urlParams.get('error_description');
+    const statusEl = document.getElementById('status');
+    const infoEl = document.getElementById('info');
+    const loginBtn = document.getElementById('loginBtn');
+    const retryBtn = document.getElementById('retryBtn');
 
-            // Log da URL completa para debug
-            console.log('🔍 URL completa:', window.location.href);
-            console.log('🔍 Origin:', window.location.origin);
-            console.log('🔍 Pathname:', window.location.pathname);
-            console.log('🔍 URL usada na autorização deve ser:', window.location.origin + window.location.pathname);
+    // Função para mostrar status
+    function showStatus(message, type = 'loading') {
+      statusEl.className = `status ${type}`;
+      statusEl.innerHTML = type === 'loading' 
+        ? `<div class="loader"></div>${message}`
+        : message;
+      statusEl.style.display = 'block';
+    }
 
-            if (error) {
-                showError(`Erro na autenticação: ${errorDescription || error}`);
-                return;
-            }
+    // Função para mostrar informações
+    function showInfo(data) {
+      infoEl.innerHTML = `
+        <strong>✅ Informações da conta:</strong>
+        <div style="margin-top: 10px;">
+          <strong>Username:</strong> <code>${data.username || 'N/A'}</code><br>
+          <strong>ID:</strong> <code>${data.id || 'N/A'}</code><br>
+          <strong>Token expira em:</strong> <code>${data.token_expires_at ? new Date(data.token_expires_at).toLocaleString('pt-BR') : 'Não expira'}</code>
+        </div>
+      `;
+      infoEl.style.display = 'block';
+    }
 
-            if (!code) {
-                showError('Código de autorização não encontrado na URL');
-                return;
-            }
+    // Função para fazer login
+    function startLogin() {
+      const authUrl = `https://www.facebook.com/v23.0/dialog/oauth?` + 
+        `client_id=${CONFIG.appId}` +
+        `&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}` +
+        `&scope=${CONFIG.scope}` +
+        `&response_type=code`;
+      
+      console.log('🔗 Redirecionando para:', authUrl);
+      window.location.href = authUrl;
+    }
 
-            try {
-                // Envia o código para o backend processar
-                const response = await fetch(CONFIG.edgeFunctionUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': CONFIG.supabaseAnonKey,
-                        'Authorization': `Bearer ${CONFIG.supabaseAnonKey}`
-                    },
-                    body: JSON.stringify({ code })
-                });
+    // Função para processar o código
+    async function processCode(code) {
+      showStatus('🔄 Trocando código por token de acesso...', 'loading');
+      
+      console.log('📤 Enviando código para Edge Function...');
+      console.log('📝 Código recebido:', code.substring(0, 20) + '...');
+      console.log('📍 Redirect URI usado:', CONFIG.redirectUri);
 
-                const data = await response.json();
+      try {
+        const response = await fetch(`${CONFIG.supabaseUrl}/functions/v1/instagram-oauth`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': CONFIG.supabaseKey,
+            'Authorization': `Bearer ${CONFIG.supabaseKey}`
+          },
+          body: JSON.stringify({ code })
+        });
 
-                if (!response.ok || !data.success) {
-                    throw new Error(data.error || 'Erro ao processar autenticação');
-                }
+        const data = await response.json();
+        console.log('📥 Resposta da Edge Function:', data);
 
-                showSuccess(data.user.username, data.user.id, data.token_expires_at);
-
-            } catch (err) {
-                showError(err.message);
-            }
+        if (data.success) {
+          showStatus('✅ Login realizado com sucesso!', 'success');
+          showInfo(data.user);
+          
+          // Redirecionar para a página principal após 3 segundos
+          setTimeout(() => {
+            window.location.href = '/'; // Ajuste para sua página principal
+          }, 3000);
+        } else {
+          throw new Error(data.error || 'Erro desconhecido');
         }
+      } catch (error) {
+        console.error('❌ Erro:', error);
+        showStatus(`❌ Erro ao processar login: ${error.message}`, 'error');
+        retryBtn.style.display = 'block';
+      }
+    }
 
-        function showSuccess(username, userId, expiresAt) {
-            document.getElementById('spinner').style.display = 'none';
-            document.getElementById('title').textContent = 'Conexão Realizada!';
-            document.getElementById('status').textContent = 'Sua conta do Instagram foi conectada com sucesso.';
-            
-            const expirationDate = expiresAt 
-                ? new Date(expiresAt).toLocaleDateString('pt-BR')
-                : 'Não expira';
-            
-            document.getElementById('result').innerHTML = `
-                <div class="success">✓</div>
-                <div class="details">
-                    <strong>Usuário:</strong> @${username}<br>
-                    <strong>ID:</strong> ${userId}<br>
-                    <strong>Token válido até:</strong> ${expirationDate}
-                </div>
-                <a href="#" class="button" onclick="window.close(); return false;">Fechar</a>
-            `;
-        }
+    // ===== INICIALIZAÇÃO =====
+    window.addEventListener('DOMContentLoaded', () => {
+      // Verifica se há um código na URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const error = urlParams.get('error');
+      const errorReason = urlParams.get('error_reason');
+      const errorDescription = urlParams.get('error_description');
 
-        function showError(message) {
-            document.getElementById('spinner').style.display = 'none';
-            document.getElementById('title').textContent = 'Erro na Conexão';
-            document.getElementById('status').textContent = 'Não foi possível conectar sua conta.';
-            
-            document.getElementById('result').innerHTML = `
-                <div class="error">✕</div>
-                <div class="details">
-                    <strong>Erro:</strong> ${message}
-                </div>
-                <a href="https://www.facebook.com/v23.0/dialog/oauth?client_id=${CONFIG.clientId}&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}&scope=instagram_basic,instagram_manage_comments,instagram_manage_insights,instagram_content_publish,pages_show_list,pages_read_engagement&response_type=code" class="button">Tentar Novamente</a>
-            `;
-        }
+      console.log('🔍 Parâmetros da URL:', {
+        code: code ? code.substring(0, 20) + '...' : null,
+        error,
+        errorReason,
+        errorDescription
+      });
 
-        // Executa ao carregar a página
-        handleCallback();
-    </script>
+      if (error) {
+        // Usuário cancelou ou houve erro
+        showStatus(
+          `❌ Erro na autenticação: ${errorDescription || error}`,
+          'error'
+        );
+        retryBtn.style.display = 'block';
+      } else if (code) {
+        // Temos um código, vamos processar
+        processCode(code);
+      } else {
+        // Nenhum código, mostrar botão de login
+        showStatus('👋 Faça login com sua conta do Instagram', 'loading');
+        statusEl.innerHTML = '👋 Faça login com sua conta do Instagram';
+        loginBtn.style.display = 'block';
+        loginBtn.onclick = startLogin;
+      }
+    });
+  </script>
 </body>
 </html>
-
