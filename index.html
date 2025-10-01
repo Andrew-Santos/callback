@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autorização Instagram Business</title>
+    <title>Sistema Completo - Instagram Business API</title>
     <style>
         * {
             margin: 0;
@@ -14,17 +14,14 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
         }
         .container {
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 600px;
-            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 40px;
         }
         h1 {
@@ -37,6 +34,36 @@
             margin-bottom: 30px;
             font-size: 14px;
         }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            color: #667eea;
+        }
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
         .input-group {
             margin-bottom: 20px;
         }
@@ -47,21 +74,25 @@
             margin-bottom: 8px;
             font-size: 14px;
         }
-        input {
+        input, textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 14px;
             transition: border-color 0.3s;
+            font-family: inherit;
         }
-        input:focus {
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        input:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
         .btn {
-            width: 100%;
-            padding: 14px;
+            padding: 14px 28px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -79,8 +110,14 @@
         .btn:active {
             transform: translateY(0);
         }
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
         .result {
-            margin-top: 30px;
+            margin-top: 20px;
             padding: 20px;
             background: #f8f9fa;
             border-radius: 8px;
@@ -89,24 +126,17 @@
         .result.show {
             display: block;
         }
-        .auth-link {
-            background: white;
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
             padding: 15px;
             border-radius: 8px;
-            word-break: break-all;
-            font-size: 13px;
-            color: #667eea;
-            border: 2px solid #667eea;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
             margin: 15px 0;
-        }
-        .copy-btn {
-            background: #28a745;
-            padding: 10px 20px;
-            width: auto;
-            margin-top: 10px;
-        }
-        .copy-btn:hover {
-            background: #218838;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
         .info-box {
             background: #fff3cd;
@@ -116,6 +146,24 @@
             border-radius: 4px;
             font-size: 13px;
             color: #856404;
+        }
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #155724;
+        }
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #721c24;
         }
         .step {
             background: #e8f4f8;
@@ -129,101 +177,428 @@
             color: #667eea;
             margin-bottom: 8px;
         }
+        .app-id-display {
+            background: #e8f4f8;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔐 Autorização Instagram Business</h1>
-        <p class="subtitle">Configure sua aplicação do Meta for Developers</p>
+        <h1>🔐 Sistema Instagram Business API</h1>
+        <p class="subtitle">Gerencie autorizações e postagens no Instagram</p>
 
         <div class="info-box">
-            <strong>⚠️ Importante:</strong> Antes de usar, você precisa:
-            <br>1. Criar um App em developers.facebook.com
-            <br>2. Adicionar o produto "Instagram Graph API"
-            <br>3. Copiar seu App ID e App Secret
+            <strong>📱 Seu App ID:</strong>
+            <div class="app-id-display">2633543703653982</div>
         </div>
 
-        <div class="input-group">
-            <label for="appId">App ID (do Meta for Developers)</label>
-            <input type="text" id="appId" placeholder="Ex: 123456789012345">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('auth')">1️⃣ Autorização</button>
+            <button class="tab" onclick="switchTab('token')">2️⃣ Obter Token</button>
+            <button class="tab" onclick="switchTab('post')">3️⃣ Fazer Post</button>
+            <button class="tab" onclick="switchTab('setup')">⚙️ Setup</button>
         </div>
 
-        <div class="input-group">
-            <label for="redirectUri">URL de Redirecionamento</label>
-            <input type="text" id="redirectUri" value="https://localhost/" placeholder="Ex: https://seusite.com/callback">
-        </div>
-
-        <button class="btn" onclick="generateAuthUrl()">🚀 Gerar Link de Autorização</button>
-
-        <div class="result" id="result">
-            <h3 style="color: #333; margin-bottom: 15px;">✅ Link Gerado!</h3>
-            <div class="auth-link" id="authLink"></div>
-            <button class="btn copy-btn" onclick="copyLink()">📋 Copiar Link</button>
+        <!-- TAB 1: AUTORIZAÇÃO -->
+        <div class="tab-content active" id="auth">
+            <h2 style="color: #333; margin-bottom: 20px;">Passo 1: Gerar Link de Autorização</h2>
             
-            <div class="step" style="margin-top: 20px;">
-                <div class="step-title">📱 Próximos Passos:</div>
-                1. Envie este link para seu cliente<br>
-                2. Cliente faz login no Instagram Business<br>
-                3. Cliente autoriza seu app<br>
-                4. Ele será redirecionado com um CODE na URL<br>
-                5. Use esse CODE para obter o Access Token
+            <div class="input-group">
+                <label for="redirectUri">URL de Redirecionamento</label>
+                <input type="text" id="redirectUri" value="https://localhost/" 
+                       placeholder="Ex: https://seusite.com/callback">
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    ⚠️ Esta URL deve estar configurada no seu App do Facebook
+                </small>
+            </div>
+
+            <button class="btn" onclick="generateAuthUrl()">🚀 Gerar Link de Autorização</button>
+
+            <div class="result" id="authResult">
+                <h3 style="color: #333; margin-bottom: 15px;">✅ Link Gerado!</h3>
+                <p style="margin-bottom: 10px; color: #666;">Envie este link para seu cliente:</p>
+                <div class="code-block" id="authLink"></div>
+                <button class="btn btn-success" onclick="copyText('authLink')">📋 Copiar Link</button>
+                <button class="btn btn-info" onclick="openAuthLink()" style="margin-left: 10px;">🔗 Abrir Link</button>
+                
+                <div class="step" style="margin-top: 20px;">
+                    <div class="step-title">📱 O que acontece agora:</div>
+                    1. Cliente clica no link<br>
+                    2. Faz login no Facebook/Instagram<br>
+                    3. Autoriza seu aplicativo<br>
+                    4. É redirecionado para a URL com um <strong>code=...</strong> na URL<br>
+                    5. Copie esse CODE e vá para a aba "2️⃣ Obter Token"
+                </div>
             </div>
         </div>
 
-        <div class="step">
-            <div class="step-title">🔧 Configurar no Meta for Developers:</div>
-            1. Vá em "Configurações do App" → "Básico"<br>
-            2. Em "Domínios do App", adicione seu domínio<br>
-            3. Em "URIs de Redirecionamento OAuth Válidos", adicione a URL acima<br>
-            4. Ative o app (tire do modo desenvolvimento se necessário)
+        <!-- TAB 2: OBTER TOKEN -->
+        <div class="tab-content" id="token">
+            <h2 style="color: #333; margin-bottom: 20px;">Passo 2: Trocar CODE por Access Token</h2>
+            
+            <div class="info-box">
+                <strong>⚠️ Você precisa do App Secret</strong><br>
+                Pegue em: developers.facebook.com → Seu App → Configurações → Básico → App Secret
+            </div>
+
+            <div class="input-group">
+                <label for="authCode">Authorization Code (da URL após aprovação)</label>
+                <input type="text" id="authCode" placeholder="Ex: AQD...">
+            </div>
+
+            <div class="input-group">
+                <label for="appSecret">App Secret</label>
+                <input type="password" id="appSecret" placeholder="Digite o App Secret">
+            </div>
+
+            <div class="input-group">
+                <label for="redirectUriToken">URL de Redirecionamento (mesma usada antes)</label>
+                <input type="text" id="redirectUriToken" value="https://localhost/">
+            </div>
+
+            <button class="btn" onclick="getAccessToken()">🔑 Obter Access Token</button>
+
+            <div class="result" id="tokenResult">
+                <h3 style="color: #333; margin-bottom: 15px;">✅ Token Obtido!</h3>
+                <p style="margin-bottom: 10px; color: #666;"><strong>Short-Lived Access Token:</strong></p>
+                <div class="code-block" id="shortToken"></div>
+                
+                <div class="success-box" style="margin-top: 20px;">
+                    <strong>🎉 Sucesso!</strong><br>
+                    Agora você tem o token de acesso. Este token dura 1-2 horas.<br>
+                    <strong>Próximo passo:</strong> Use este token para obter as páginas e fazer posts!
+                </div>
+                
+                <button class="btn btn-success" onclick="copyText('shortToken')">📋 Copiar Token</button>
+            </div>
+
+            <div class="result" id="tokenError"></div>
+
+            <div class="step">
+                <div class="step-title">🔧 Como fazer essa requisição (cURL):</div>
+                <div class="code-block" id="curlToken"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: FAZER POST -->
+        <div class="tab-content" id="post">
+            <h2 style="color: #333; margin-bottom: 20px;">Passo 3: Postar no Instagram</h2>
+            
+            <div class="info-box">
+                Primeiro, você precisa do Access Token (da aba anterior) e do Instagram Business Account ID
+            </div>
+
+            <div class="input-group">
+                <label for="accessToken">Access Token</label>
+                <input type="text" id="accessToken" placeholder="Cole o token aqui">
+            </div>
+
+            <button class="btn btn-info" onclick="getPages()" style="margin-bottom: 20px;">
+                📄 Listar Páginas e Instagram Accounts
+            </button>
+
+            <div class="result" id="pagesResult"></div>
+
+            <div class="input-group">
+                <label for="igAccountId">Instagram Business Account ID</label>
+                <input type="text" id="igAccountId" placeholder="Ex: 17841400...">
+            </div>
+
+            <div class="input-group">
+                <label for="imageUrl">URL da Imagem</label>
+                <input type="text" id="imageUrl" placeholder="https://exemplo.com/imagem.jpg">
+            </div>
+
+            <div class="input-group">
+                <label for="caption">Legenda do Post</label>
+                <textarea id="caption" placeholder="Digite a legenda aqui..."></textarea>
+            </div>
+
+            <button class="btn" onclick="publishPost()">📸 Publicar Post</button>
+
+            <div class="result" id="postResult"></div>
+
+            <div class="step">
+                <div class="step-title">📝 Processo de publicação:</div>
+                1. Criar o container de mídia (upload da imagem)<br>
+                2. Aguardar processamento<br>
+                3. Publicar o post
+            </div>
+        </div>
+
+        <!-- TAB 4: SETUP -->
+        <div class="tab-content" id="setup">
+            <h2 style="color: #333; margin-bottom: 20px;">⚙️ Configuração do App</h2>
+            
+            <div class="step">
+                <div class="step-title">1. Criar App no Meta for Developers</div>
+                1. Acesse <a href="https://developers.facebook.com/apps/" target="_blank">developers.facebook.com/apps/</a><br>
+                2. Clique em "Criar App"<br>
+                3. Escolha tipo "Empresa" ou "Consumidor"<br>
+                4. Preencha as informações
+            </div>
+
+            <div class="step">
+                <div class="step-title">2. Adicionar Instagram Graph API</div>
+                1. No painel do seu app, vá em "Adicionar Produto"<br>
+                2. Procure por "Instagram Graph API"<br>
+                3. Clique em "Configurar"
+            </div>
+
+            <div class="step">
+                <div class="step-title">3. Configurar URLs de Redirecionamento</div>
+                1. Vá em "Configurações do App" → "Básico"<br>
+                2. Em "Domínios do App", adicione seu domínio (ex: localhost)<br>
+                3. Role até "URIs de Redirecionamento OAuth Válidos"<br>
+                4. Adicione suas URLs (ex: https://localhost/)<br>
+                5. Salve as alterações
+            </div>
+
+            <div class="step">
+                <div class="step-title">4. Escopos Necessários</div>
+                Para postar no Instagram Business, você precisa dos seguintes escopos:<br><br>
+                • <strong>instagram_basic</strong> - Acesso básico<br>
+                • <strong>instagram_content_publish</strong> - Publicar conteúdo<br>
+                • <strong>pages_show_list</strong> - Listar páginas<br>
+                • <strong>pages_read_engagement</strong> - Ler dados de engajamento
+            </div>
+
+            <div class="step">
+                <div class="step-title">5. Modo de Desenvolvimento vs Ativo</div>
+                • <strong>Modo Desenvolvimento:</strong> Apenas você e testadores podem usar<br>
+                • <strong>Modo Ativo:</strong> Qualquer pessoa pode autorizar<br>
+                <br>
+                Para ativar, você precisa completar a Análise do App (App Review)
+            </div>
+
+            <div class="info-box">
+                <strong>🔐 Segurança:</strong> Nunca exponha seu App Secret publicamente!<br>
+                Em produção, todas as requisições que usam o App Secret devem ser feitas no servidor (backend).
+            </div>
         </div>
     </div>
 
     <script>
-        function generateAuthUrl() {
-            const appId = document.getElementById('appId').value.trim();
-            const redirectUri = document.getElementById('redirectUri').value.trim();
+        const APP_ID = '2633543703653982';
+        let generatedAuthUrl = '';
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
-            if (!appId) {
-                alert('Por favor, insira o App ID');
-                return;
-            }
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function generateAuthUrl() {
+            const redirectUri = document.getElementById('redirectUri').value.trim();
             
             if (!redirectUri) {
                 alert('Por favor, insira a URL de redirecionamento');
                 return;
             }
 
-            // Escopos necessários para postar no Instagram Business
             const scopes = [
                 'instagram_basic',
                 'instagram_content_publish',
                 'pages_show_list',
-                'pages_read_engagement'
+                'pages_read_engagement',
+                'business_management'
             ].join(',');
 
-            const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?` +
-                `client_id=${encodeURIComponent(appId)}` +
+            generatedAuthUrl = `https://www.facebook.com/v21.0/dialog/oauth?` +
+                `client_id=${APP_ID}` +
                 `&redirect_uri=${encodeURIComponent(redirectUri)}` +
                 `&scope=${encodeURIComponent(scopes)}` +
                 `&response_type=code`;
 
-            document.getElementById('authLink').textContent = authUrl;
-            document.getElementById('result').classList.add('show');
+            document.getElementById('authLink').textContent = generatedAuthUrl;
+            document.getElementById('authResult').classList.add('show');
         }
 
-        function copyLink() {
-            const link = document.getElementById('authLink').textContent;
-            navigator.clipboard.writeText(link).then(() => {
+        function openAuthLink() {
+            if (generatedAuthUrl) {
+                window.open(generatedAuthUrl, '_blank');
+            }
+        }
+
+        async function getAccessToken() {
+            const code = document.getElementById('authCode').value.trim();
+            const appSecret = document.getElementById('appSecret').value.trim();
+            const redirectUri = document.getElementById('redirectUriToken').value.trim();
+
+            if (!code || !appSecret || !redirectUri) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            const tokenUrl = `https://graph.facebook.com/v21.0/oauth/access_token?` +
+                `client_id=${APP_ID}` +
+                `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+                `&client_secret=${appSecret}` +
+                `&code=${code}`;
+
+            document.getElementById('curlToken').textContent = 
+                `curl -X GET "${tokenUrl}"`;
+
+            try {
+                const response = await fetch(tokenUrl);
+                const data = await response.json();
+
+                if (data.access_token) {
+                    document.getElementById('shortToken').textContent = data.access_token;
+                    document.getElementById('tokenResult').classList.add('show');
+                    document.getElementById('tokenError').classList.remove('show');
+                    
+                    // Auto-preencher na aba de post
+                    document.getElementById('accessToken').value = data.access_token;
+                } else {
+                    showError('tokenError', data.error ? data.error.message : 'Erro desconhecido');
+                }
+            } catch (error) {
+                showError('tokenError', 'Erro ao fazer requisição: ' + error.message);
+            }
+        }
+
+        async function getPages() {
+            const accessToken = document.getElementById('accessToken').value.trim();
+            
+            if (!accessToken) {
+                alert('Insira o Access Token primeiro!');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `https://graph.facebook.com/v21.0/me/accounts?access_token=${accessToken}`
+                );
+                const data = await response.json();
+
+                if (data.data) {
+                    let html = '<div class="success-box"><strong>📄 Páginas encontradas:</strong><br><br>';
+                    
+                    for (const page of data.data) {
+                        html += `<strong>${page.name}</strong> (ID: ${page.id})<br>`;
+                        
+                        // Buscar Instagram Account da página
+                        const igResponse = await fetch(
+                            `https://graph.facebook.com/v21.0/${page.id}?fields=instagram_business_account&access_token=${page.access_token}`
+                        );
+                        const igData = await igResponse.json();
+                        
+                        if (igData.instagram_business_account) {
+                            html += `<span style="color: #28a745;">✅ Instagram Business ID: <strong>${igData.instagram_business_account.id}</strong></span><br>`;
+                            document.getElementById('igAccountId').value = igData.instagram_business_account.id;
+                        } else {
+                            html += `<span style="color: #dc3545;">❌ Nenhuma conta Instagram Business conectada</span><br>`;
+                        }
+                        html += '<br>';
+                    }
+                    
+                    html += '</div>';
+                    document.getElementById('pagesResult').innerHTML = html;
+                    document.getElementById('pagesResult').classList.add('show');
+                } else {
+                    showError('pagesResult', data.error ? data.error.message : 'Nenhuma página encontrada');
+                }
+            } catch (error) {
+                showError('pagesResult', 'Erro: ' + error.message);
+            }
+        }
+
+        async function publishPost() {
+            const accessToken = document.getElementById('accessToken').value.trim();
+            const igAccountId = document.getElementById('igAccountId').value.trim();
+            const imageUrl = document.getElementById('imageUrl').value.trim();
+            const caption = document.getElementById('caption').value.trim();
+
+            if (!accessToken || !igAccountId || !imageUrl) {
+                alert('Preencha todos os campos obrigatórios!');
+                return;
+            }
+
+            try {
+                // Passo 1: Criar container de mídia
+                document.getElementById('postResult').innerHTML = 
+                    '<div class="info-box">⏳ Criando container de mídia...</div>';
+                document.getElementById('postResult').classList.add('show');
+
+                const containerResponse = await fetch(
+                    `https://graph.facebook.com/v21.0/${igAccountId}/media`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            image_url: imageUrl,
+                            caption: caption,
+                            access_token: accessToken
+                        })
+                    }
+                );
+                const containerData = await containerResponse.json();
+
+                if (containerData.id) {
+                    document.getElementById('postResult').innerHTML = 
+                        '<div class="info-box">⏳ Container criado! Aguardando processamento...<br>Container ID: ' + 
+                        containerData.id + '</div>';
+
+                    // Aguardar um pouco para o processamento
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+
+                    // Passo 2: Publicar
+                    const publishResponse = await fetch(
+                        `https://graph.facebook.com/v21.0/${igAccountId}/media_publish`,
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                creation_id: containerData.id,
+                                access_token: accessToken
+                            })
+                        }
+                    );
+                    const publishData = await publishResponse.json();
+
+                    if (publishData.id) {
+                        document.getElementById('postResult').innerHTML = 
+                            `<div class="success-box"><strong>🎉 Post publicado com sucesso!</strong><br><br>
+                            Post ID: ${publishData.id}<br><br>
+                            <a href="https://www.instagram.com/p/${publishData.id}/" target="_blank">Ver no Instagram</a>
+                            </div>`;
+                    } else {
+                        showError('postResult', publishData.error ? publishData.error.message : 'Erro ao publicar');
+                    }
+                } else {
+                    showError('postResult', containerData.error ? containerData.error.message : 'Erro ao criar container');
+                }
+            } catch (error) {
+                showError('postResult', 'Erro: ' + error.message);
+            }
+        }
+
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
                 const btn = event.target;
                 const originalText = btn.textContent;
                 btn.textContent = '✅ Copiado!';
-                btn.style.background = '#28a745';
                 setTimeout(() => {
                     btn.textContent = originalText;
-                    btn.style.background = '';
                 }, 2000);
             });
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="error-box"><strong>❌ Erro:</strong><br>${message}</div>`;
+            element.classList.add('show');
         }
     </script>
 </body>
