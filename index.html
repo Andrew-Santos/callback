@@ -120,19 +120,15 @@
 
     <script>
         const CONFIG = {
+            edgeFunctionUrl: 'https://owpboqevrtthsupugcrt.supabase.co/functions/v1/instagram-oauth',
             clientId: '1574570113515856',
-            clientSecret: 'abae95ef7bda4062c4dd30a1eec2ae46',
-            redirectUri: 'https://callback.teamcriativa.com',
-            supabaseUrl: 'https://owpboqevrtthsupugcrt.supabase.co',
-            supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGJvcWV2cnR0aHN1cHVnY3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjY4MDQsImV4cCI6MjA2OTUwMjgwNH0.7RjkVOUT6ByewP0D6FgHQjZDCoi4GYnGT6BMj794MfQ',
-            edgeFunctionUrl: 'https://owpboqevrtthsupugcrt.supabase.co/functions/v1/instagram-oauth'
+            redirectUri: 'https://callback.teamcriativa.com'
         };
 
         async function handleCallback() {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
             const error = urlParams.get('error');
-            const errorReason = urlParams.get('error_reason');
             const errorDescription = urlParams.get('error_description');
 
             if (error) {
@@ -146,104 +142,45 @@
             }
 
             try {
-                // Troca o código pelo token
-                const tokenResponse = await fetch('https://api.instagram.com/oauth/access_token', {
+                // Envia o código para o backend processar
+                const response = await fetch(CONFIG.edgeFunctionUrl, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/json',
                     },
-                    body: new URLSearchParams({
-                        client_id: CONFIG.clientId,
-                        client_secret: CONFIG.clientSecret,
-                        grant_type: 'authorization_code',
-                        redirect_uri: CONFIG.redirectUri,
-                        code: code
-                    })
+                    body: JSON.stringify({ code })
                 });
 
-                if (!tokenResponse.ok) {
-                    const errorData = await tokenResponse.json();
-                    throw new Error(errorData.error_message || 'Erro ao trocar código por token');
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'Erro ao processar autenticação');
                 }
 
-                const tokenData = await tokenResponse.json();
-                const accessToken = tokenData.access_token;
-                const userId = tokenData.user_id;
-
-                // Busca informações do perfil
-                const profileResponse = await fetch(
-                    `https://graph.instagram.com/${userId}?fields=id,username,account_type,media_count&access_token=${accessToken}`
-                );
-
-                if (!profileResponse.ok) {
-                    throw new Error('Erro ao buscar informações do perfil');
-                }
-
-                const profileData = await profileResponse.json();
-
-                // Troca por token de longa duração
-                const longLivedTokenResponse = await fetch(
-                    `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${CONFIG.clientSecret}&access_token=${accessToken}`
-                );
-
-                let finalToken = accessToken;
-                let expiresIn = null;
-
-                if (longLivedTokenResponse.ok) {
-                    const longLivedData = await longLivedTokenResponse.json();
-                    finalToken = longLivedData.access_token;
-                    expiresIn = longLivedData.expires_in; // segundos
-                }
-
-                // Salva no Supabase
-                const expirationDate = expiresIn 
-                    ? new Date(Date.now() + (expiresIn * 1000)).toISOString()
-                    : null;
-
-                const supabaseResponse = await fetch(
-                    `${CONFIG.supabaseUrl}/rest/v1/client`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'apikey': CONFIG.supabaseKey,
-                            'Authorization': `Bearer ${CONFIG.supabaseKey}`,
-                            'Prefer': 'resolution=merge-duplicates'
-                        },
-                        body: JSON.stringify({
-                            users: profileData.username,
-                            id_instagram: userId.toString(),
-                            access_token: finalToken,
-                            validade_token: expirationDate,
-                            profile_photo: null
-                        })
-                    }
-                );
-
-                if (!supabaseResponse.ok) {
-                    const errorText = await supabaseResponse.text();
-                    throw new Error(`Erro ao salvar no banco: ${errorText}`);
-                }
-
-                showSuccess(profileData.username, userId);
+                showSuccess(data.user.username, data.user.id, data.token_expires_at);
 
             } catch (err) {
                 showError(err.message);
             }
         }
 
-        function showSuccess(username, userId) {
+        function showSuccess(username, userId, expiresAt) {
             document.getElementById('spinner').style.display = 'none';
             document.getElementById('title').textContent = 'Conexão Realizada!';
             document.getElementById('status').textContent = 'Sua conta do Instagram foi conectada com sucesso.';
+            
+            const expirationDate = expiresAt 
+                ? new Date(expiresAt).toLocaleDateString('pt-BR')
+                : 'Não expira';
             
             document.getElementById('result').innerHTML = `
                 <div class="success">✓</div>
                 <div class="details">
                     <strong>Usuário:</strong> @${username}<br>
-                    <strong>ID:</strong> ${userId}
+                    <strong>ID:</strong> ${userId}<br>
+                    <strong>Token válido até:</strong> ${expirationDate}
                 </div>
-                <a href="#" class="button" onclick="window.close()">Fechar</a>
+                <a href="#" class="button" onclick="window.close(); return false;">Fechar</a>
             `;
         }
 
