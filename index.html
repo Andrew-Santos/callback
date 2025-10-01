@@ -256,7 +256,10 @@
 
             <div class="input-group">
                 <label for="appSecret">App Secret</label>
-                <input type="password" id="appSecret" placeholder="Digite o App Secret">
+                <input type="password" id="appSecret" value="dfdbd31e81bc378a8f84512ecf1f36dc" placeholder="Digite o App Secret">
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    👁️ <span style="cursor: pointer; color: #667eea;" onclick="toggleSecret()">Mostrar/Ocultar</span>
+                </small>
             </div>
 
             <div class="input-group">
@@ -405,14 +408,19 @@
                 document.getElementById('authCode').value = code;
                 switchTab('token');
                 
-                // Mostrar mensagem de sucesso
+                // Mostrar mensagem de sucesso com aviso
                 const successMsg = document.createElement('div');
                 successMsg.className = 'success-box';
-                successMsg.innerHTML = '<strong>✅ Código capturado automaticamente!</strong><br>Agora insira o App Secret e clique em "Obter Access Token"';
+                successMsg.innerHTML = '<strong>✅ Código capturado automaticamente!</strong><br>' +
+                    'Agora insira o App Secret e clique em "Obter Access Token"<br><br>' +
+                    '⚠️ <strong>Importante:</strong> Este código expira em ~10 minutos e só pode ser usado uma vez!';
                 document.getElementById('token').insertBefore(successMsg, document.getElementById('token').firstChild);
                 
                 // Focar no campo App Secret
                 document.getElementById('appSecret').focus();
+                
+                // Limpar a URL para evitar reutilização acidental do code
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
         };
 
@@ -478,7 +486,12 @@
                 `&code=${code}`;
 
             document.getElementById('curlToken').textContent = 
-                `curl -X GET "${tokenUrl}"`;
+                `curl -X GET "${tokenUrl.replace(appSecret, 'SEU_APP_SECRET')}"`;
+
+            // Mostrar loading
+            document.getElementById('tokenError').innerHTML = 
+                '<div class="info-box">⏳ Trocando código por token...</div>';
+            document.getElementById('tokenError').classList.add('show');
 
             try {
                 const response = await fetch(tokenUrl);
@@ -492,7 +505,26 @@
                     // Auto-preencher na aba de post
                     document.getElementById('accessToken').value = data.access_token;
                 } else {
-                    showError('tokenError', data.error ? data.error.message : 'Erro desconhecido');
+                    let errorMsg = 'Erro desconhecido';
+                    
+                    if (data.error) {
+                        errorMsg = `<strong>${data.error.type || 'Error'}:</strong> ${data.error.message}`;
+                        
+                        // Mensagens de ajuda específicas
+                        if (data.error.message.includes('code') || data.error.code === 100) {
+                            errorMsg += '<br><br>💡 <strong>Possíveis causas:</strong><br>' +
+                                '• O código já foi usado (códigos só funcionam uma vez)<br>' +
+                                '• O código expirou (válido por ~10 minutos)<br>' +
+                                '• A URL de redirecionamento não confere<br><br>' +
+                                '🔄 <strong>Solução:</strong> Volte para a aba "1️⃣ Autorização" e gere um novo link';
+                        }
+                        
+                        if (data.error.message.includes('redirect_uri')) {
+                            errorMsg += '<br><br>💡 A URL de redirecionamento deve ser <strong>exatamente igual</strong> à configurada no Meta for Developers';
+                        }
+                    }
+                    
+                    showError('tokenError', errorMsg);
                 }
             } catch (error) {
                 showError('tokenError', 'Erro ao fazer requisição: ' + error.message);
@@ -625,6 +657,11 @@
                     btn.textContent = originalText;
                 }, 2000);
             });
+        }
+
+        function toggleSecret() {
+            const input = document.getElementById('appSecret');
+            input.type = input.type === 'password' ? 'text' : 'password';
         }
 
         function showError(elementId, message) {
