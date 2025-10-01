@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instagram Login - Callback</title>
+  <title>Autorizar Postagens no Instagram</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
     body {
@@ -25,15 +25,59 @@
       background: white;
       border-radius: 20px;
       padding: 40px;
-      max-width: 500px;
+      max-width: 600px;
       width: 100%;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
     
     h1 {
       color: #333;
-      margin-bottom: 20px;
-      font-size: 24px;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+    
+    .steps {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    
+    .step {
+      display: flex;
+      align-items: start;
+      margin-bottom: 15px;
+    }
+    
+    .step:last-child {
+      margin-bottom: 0;
+    }
+    
+    .step-number {
+      background: #667eea;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+    
+    .step-text {
+      color: #333;
+      font-size: 15px;
+      line-height: 1.5;
     }
     
     .status {
@@ -41,166 +85,225 @@
       border-radius: 10px;
       margin-bottom: 20px;
       font-size: 14px;
+      display: none;
     }
     
     .status.loading {
       background: #fff3cd;
       color: #856404;
       border: 1px solid #ffeaa7;
+      display: block;
     }
     
     .status.success {
       background: #d4edda;
       color: #155724;
       border: 1px solid #c3e6cb;
+      display: block;
     }
     
     .status.error {
       background: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
-    }
-    
-    .info {
-      background: #e7f3ff;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-      font-size: 13px;
-      color: #004085;
-    }
-    
-    .info strong {
       display: block;
-      margin-bottom: 5px;
-    }
-    
-    .info code {
-      background: #fff;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 12px;
-      word-break: break-all;
     }
     
     button {
       width: 100%;
-      padding: 15px;
+      padding: 16px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       transition: transform 0.2s;
     }
     
-    button:hover {
+    button:hover:not(:disabled) {
       transform: translateY(-2px);
     }
     
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-      transform: none;
+    }
+    
+    .result {
+      background: #e7f3ff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+    }
+    
+    .result.show {
+      display: block;
+    }
+    
+    .result h3 {
+      color: #004085;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    
+    .result-item {
+      margin-bottom: 12px;
+    }
+    
+    .result-label {
+      font-weight: 600;
+      color: #004085;
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+    
+    .result-value {
+      background: white;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      word-break: break-all;
+      color: #333;
     }
     
     .loader {
       border: 3px solid #f3f3f3;
       border-top: 3px solid #667eea;
       border-radius: 50%;
-      width: 30px;
-      height: 30px;
+      width: 24px;
+      height: 24px;
       animation: spin 1s linear infinite;
-      margin: 20px auto;
+      display: inline-block;
+      margin-right: 10px;
+      vertical-align: middle;
     }
     
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    
+    .warning {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #856404;
+    }
+    
+    .warning strong {
+      display: block;
+      margin-bottom: 5px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🔐 Instagram OAuth</h1>
+    <h1>Autorizar Postagens</h1>
+    <p class="subtitle">Autorize o acesso para que possamos postar em seu Instagram Business</p>
     
-    <div id="status" class="status loading">
-      <div class="loader"></div>
-      Processando autenticação...
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-text">Clique no botão abaixo para conectar sua conta</div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-text">Faça login com sua conta do Facebook conectada ao Instagram</div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-text">Autorize as permissões solicitadas</div>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-text">Pronto! Poderemos postar em sua conta</div>
+      </div>
     </div>
     
-    <div id="info" class="info" style="display: none;"></div>
+    <div id="status" class="status"></div>
     
-    <button id="loginBtn" style="display: none;">
-      Fazer Login com Instagram
+    <button id="authBtn">
+      Conectar Instagram Business
     </button>
     
-    <button id="retryBtn" style="display: none;" onclick="window.location.href = window.location.origin + window.location.pathname">
-      Tentar Novamente
-    </button>
+    <div id="result" class="result"></div>
+    
+    <div class="warning">
+      <strong>Requisitos:</strong>
+      Sua conta do Instagram deve ser Business ou Creator e estar conectada a uma Página do Facebook.
+    </div>
   </div>
 
   <script>
-    // ===== CONFIGURAÇÃO =====
+    // CONFIGURAÇÃO - ATUALIZE COM SUAS CREDENCIAIS
     const CONFIG = {
       appId: '2633543703653982',
-      // COM barra no final para combinar com a configuração do Facebook
       redirectUri: 'https://callback.teamcriativa.com/',
-      scope: 'instagram_basic,pages_show_list,pages_read_engagement',
+      scope: 'pages_show_list,pages_read_engagement,instagram_basic,instagram_content_publish',
       supabaseUrl: 'https://owpboqevrtthsupugcrt.supabase.co',
       supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93cGJvcWV2cnR0aHN1cHVnY3J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjY4MDQsImV4cCI6MjA2OTUwMjgwNH0.7RjkVOUT6ByewP0D6FgHQjZDCoi4GYnGT6BMj794MfQ'
     };
 
-    console.log('🔍 Redirect URI que será usada:', CONFIG.redirectUri);
-
     const statusEl = document.getElementById('status');
-    const infoEl = document.getElementById('info');
-    const loginBtn = document.getElementById('loginBtn');
-    const retryBtn = document.getElementById('retryBtn');
+    const authBtn = document.getElementById('authBtn');
+    const resultEl = document.getElementById('result');
 
-    // Função para mostrar status
     function showStatus(message, type = 'loading') {
       statusEl.className = `status ${type}`;
       statusEl.innerHTML = type === 'loading' 
         ? `<div class="loader"></div>${message}`
         : message;
-      statusEl.style.display = 'block';
     }
 
-    // Função para mostrar informações
-    function showInfo(data) {
-      infoEl.innerHTML = `
-        <strong>✅ Informações da conta:</strong>
-        <div style="margin-top: 10px;">
-          <strong>Username:</strong> <code>${data.username || 'N/A'}</code><br>
-          <strong>ID:</strong> <code>${data.id || 'N/A'}</code><br>
-          <strong>Token expira em:</strong> <code>${data.token_expires_at ? new Date(data.token_expires_at).toLocaleString('pt-BR') : 'Não expira'}</code>
+    function showResult(data) {
+      resultEl.className = 'result show';
+      resultEl.innerHTML = `
+        <h3>Autorização Concluída!</h3>
+        <div class="result-item">
+          <span class="result-label">Username:</span>
+          <div class="result-value">@${data.username}</div>
         </div>
+        <div class="result-item">
+          <span class="result-label">Instagram User ID:</span>
+          <div class="result-value">${data.id}</div>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Token válido até:</span>
+          <div class="result-value">${data.token_expires_at ? new Date(data.token_expires_at).toLocaleString('pt-BR') : 'Token de longa duração (60 dias)'}</div>
+        </div>
+        <p style="margin-top: 15px; color: #155724; font-size: 14px;">
+          O token de acesso foi salvo no banco de dados e você já pode fazer postagens nesta conta!
+        </p>
       `;
-      infoEl.style.display = 'block';
     }
 
-    // Função para fazer login
-    function startLogin() {
+    function startAuth() {
       const authUrl = `https://www.facebook.com/v23.0/dialog/oauth?` + 
         `client_id=${CONFIG.appId}` +
         `&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}` +
         `&scope=${CONFIG.scope}` +
         `&response_type=code`;
       
-      console.log('🔗 Redirecionando para:', authUrl);
+      console.log('Redirecionando para autorização...');
+      console.log('App ID:', CONFIG.appId);
+      console.log('Redirect URI:', CONFIG.redirectUri);
+      
       window.location.href = authUrl;
     }
 
-    // Função para processar o código
     async function processCode(code) {
-      showStatus('🔄 Trocando código por token de acesso...', 'loading');
+      showStatus('Processando autorização...', 'loading');
+      authBtn.disabled = true;
       
-      console.log('📤 Enviando código para Edge Function...');
-      console.log('📝 Código recebido:', code.substring(0, 20) + '...');
-      console.log('📍 Redirect URI usado:', CONFIG.redirectUri);
+      console.log('Enviando código para o servidor...');
 
       try {
         const response = await fetch(`${CONFIG.supabaseUrl}/functions/v1/instagram-oauth`, {
@@ -212,63 +315,39 @@
           },
           body: JSON.stringify({ 
             code,
-            redirect_uri: CONFIG.redirectUri // Envia a mesma redirect_uri usada na autorização
+            redirect_uri: CONFIG.redirectUri
           })
         });
 
         const data = await response.json();
-        console.log('📥 Resposta da Edge Function:', data);
+        console.log('Resposta do servidor:', data);
 
         if (data.success) {
-          showStatus('✅ Login realizado com sucesso!', 'success');
-          showInfo(data.user);
-          
-          // Redirecionar para a página principal após 3 segundos
-          setTimeout(() => {
-            window.location.href = '/'; // Ajuste para sua página principal
-          }, 3000);
+          showStatus('Autorização concluída com sucesso!', 'success');
+          showResult(data.user);
         } else {
           throw new Error(data.error || 'Erro desconhecido');
         }
       } catch (error) {
-        console.error('❌ Erro:', error);
-        showStatus(`❌ Erro ao processar login: ${error.message}`, 'error');
-        retryBtn.style.display = 'block';
+        console.error('Erro:', error);
+        showStatus(`Erro: ${error.message}`, 'error');
+        authBtn.disabled = false;
       }
     }
 
-    // ===== INICIALIZAÇÃO =====
+    // Inicialização
     window.addEventListener('DOMContentLoaded', () => {
-      // Verifica se há um código na URL
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
       const error = urlParams.get('error');
-      const errorReason = urlParams.get('error_reason');
       const errorDescription = urlParams.get('error_description');
 
-      console.log('🔍 Parâmetros da URL:', {
-        code: code ? code.substring(0, 20) + '...' : null,
-        error,
-        errorReason,
-        errorDescription
-      });
-
       if (error) {
-        // Usuário cancelou ou houve erro
-        showStatus(
-          `❌ Erro na autenticação: ${errorDescription || error}`,
-          'error'
-        );
-        retryBtn.style.display = 'block';
+        showStatus(`Erro: ${errorDescription || error}`, 'error');
       } else if (code) {
-        // Temos um código, vamos processar
         processCode(code);
       } else {
-        // Nenhum código, mostrar botão de login
-        showStatus('👋 Faça login com sua conta do Instagram', 'loading');
-        statusEl.innerHTML = '👋 Faça login com sua conta do Instagram';
-        loginBtn.style.display = 'block';
-        loginBtn.onclick = startLogin;
+        authBtn.onclick = startAuth;
       }
     });
   </script>
