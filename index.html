@@ -697,8 +697,15 @@
                 showStatus('success', 
                     `<strong>Conectado com sucesso!</strong><br><br>` +
                     `Conta: @${profileData.username}<br>` +
-                    `Token válido até: ${validadeToken.toLocaleDateString('pt-BR')}`
+                    `Redirecionando...`
                 );
+
+                showProfile(profileData.username, profileData.profile_picture_url, igAccountId);
+                
+                // Redirecionar após 2 segundos
+                setTimeout(() => {
+                    window.location.href = 'https://porta.teamcriativa.com';
+                }, 2000);
 
                 showProfile(profileData.username, profileData.profile_picture_url, igAccountId);
                 enableButton();
@@ -783,3 +790,4 @@
     </script>
 </body>
 </html>
+
