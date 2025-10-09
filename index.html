@@ -4,79 +4,296 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instagram Business - Sistema Automatizado</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
+        :root {
+            --primary: #000000;
+            --primary-light: #333333;
+            --secondary: #666666;
+            --background: #ffffff;
+            --background-light: #f5f5f5;
+            --background-dark: #e0e0e0;
+            --text: #000000;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --white: #ffffff;
+            --border: #e0e0e0;
+            --accent: #1a1a1a;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-light);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-        }
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 600px;
-            width: 100%;
-            padding: 50px 40px;
-            text-align: center;
-        }
-        .logo {
-            font-size: 64px;
-            margin-bottom: 20px;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 32px;
-        }
-        .subtitle {
-            color: #666;
-            margin-bottom: 40px;
-            font-size: 16px;
             line-height: 1.6;
         }
-        .btn-connect {
-            padding: 18px 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
+
+        .container {
+            background: var(--white);
+            border-radius: 0;
+            box-shadow: 0 0 60px rgba(0,0,0,0.08);
+            max-width: 700px;
+            width: 100%;
+            padding: 50px;
+            border: 1px solid var(--border);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .logo {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            border: 2px solid var(--primary);
+        }
+
+        h1 {
+            color: var(--text);
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* Permissions Section */
+        .permissions-section {
+            background: var(--background-light);
+            padding: 28px;
+            border-radius: 0;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text);
             font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .section-title i {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .permission-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: var(--white);
+            border-radius: 0;
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--primary);
+        }
+
+        .permission-item.not-used {
+            border-left-color: var(--secondary);
+            opacity: 0.6;
+        }
+
+        .permission-icon {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--background-light);
+            border-radius: 0;
+            border: 1px solid var(--border);
+        }
+
+        .permission-item.not-used .permission-icon {
+            background: var(--background-dark);
+            opacity: 0.5;
+        }
+
+        .permission-icon i {
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .permission-item.not-used .permission-icon i {
+            color: var(--secondary);
+        }
+
+        .permission-content {
+            flex: 1;
+        }
+
+        .permission-title {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .permission-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Data Usage Section */
+        .data-usage {
+            background: var(--background-light);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--primary);
+            padding: 22px;
+            border-radius: 0;
+            margin-bottom: 25px;
+        }
+
+        .data-usage .section-title {
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        .data-usage .section-title i {
+            color: var(--primary);
+        }
+
+        .data-usage p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .data-usage ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .data-usage li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding-left: 24px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .data-usage li:before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Privacy Commitment */
+        .privacy-commitment {
+            background: var(--background-light);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--primary);
+            padding: 22px;
+            border-radius: 0;
+            margin-bottom: 30px;
+        }
+
+        .privacy-commitment .section-title {
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .privacy-commitment .section-title i {
+            color: var(--primary);
+        }
+
+        .privacy-commitment p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Connect Button */
+        .btn-connect {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 0;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            justify-content: center;
+            gap: 10px;
+            box-shadow: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
         .btn-connect:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
-        }
-        .btn-connect:active {
+            background: var(--accent);
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
+
+        .btn-connect:active {
+            transform: translateY(0);
+        }
+
         .btn-connect:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
+
+        .btn-connect i {
+            font-size: 20px;
+        }
+
+        /* Status Box */
         .status-box {
-            margin-top: 30px;
-            padding: 20px;
-            border-radius: 12px;
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 0;
             display: none;
             animation: slideIn 0.3s ease;
+            border-left: 3px solid var(--primary);
         }
+
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -87,132 +304,261 @@
                 transform: translateY(0);
             }
         }
+
         .status-box.show {
-            display: block;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
         }
+
+        .status-box i {
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
         .status-loading {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            color: #856404;
+            background: var(--background-light);
+            border-left: 3px solid var(--secondary);
+            color: var(--text-secondary);
         }
+
         .status-success {
-            background: #d4edda;
-            border-left: 4px solid #28a745;
-            color: #155724;
+            background: var(--background-light);
+            border-left: 3px solid var(--primary);
+            color: var(--text);
         }
+
         .status-error {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            color: #721c24;
+            background: var(--background-light);
+            border-left: 3px solid var(--primary);
+            color: var(--text);
         }
+
         .spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(0,0,0,0.1);
-            border-top-color: #667eea;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin-right: 10px;
         }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        .info-card {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
-            margin-top: 30px;
-            text-align: left;
-        }
-        .info-card h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-        .info-card ul {
-            list-style: none;
-            color: #666;
-            line-height: 2;
-        }
-        .info-card ul li:before {
-            content: "✓ ";
-            color: #28a745;
-            font-weight: bold;
-            margin-right: 8px;
-        }
+
+        /* Profile Info */
         .profile-info {
             display: none;
-            margin-top: 30px;
+            margin-top: 20px;
             padding: 25px;
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            border-radius: 12px;
-            border: 2px solid #667eea30;
+            background: var(--background-light);
+            border-radius: 0;
+            border: 2px solid var(--border);
+            text-align: center;
         }
+
         .profile-info.show {
             display: block;
         }
+
         .profile-photo {
             width: 80px;
             height: 80px;
             border-radius: 50%;
             margin: 0 auto 15px;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 3px solid var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+
         .profile-name {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
-            color: #333;
+            color: var(--text);
             margin-bottom: 5px;
         }
+
         .profile-id {
-            font-size: 14px;
-            color: #666;
-            font-family: monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'Courier New', monospace;
         }
-        .admin-panel {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid #e0e0e0;
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border);
+            text-align: center;
         }
-        .admin-title {
-            font-size: 14px;
-            color: #999;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+
+        .footer p {
+            font-size: 12px;
+            color: var(--text-secondary);
         }
-        .btn-admin {
-            padding: 12px 24px;
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin: 5px;
-        }
-        .btn-admin:hover {
-            background: #667eea;
-            color: white;
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .permission-item {
+                padding: 12px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">📸</div>
-        <h1>Conectar Instagram</h1>
-        <p class="subtitle">
-            Clique no botão abaixo para autorizar o acesso ao seu Instagram Business.<br>
-            Tudo será configurado automaticamente!
-        </p>
+        <div class="header">
+            <div class="logo">
+                <i class="ph-fill ph-instagram-logo" style="font-size: 48px;"></i>
+            </div>
+            <h1>Conectar Instagram Business</h1>
+            <p class="subtitle">
+                Conecte sua conta Instagram Business de forma segura e transparente para gerenciar suas publicações.
+            </p>
+        </div>
+
+        <!-- Permissões que USAMOS -->
+        <div class="permissions-section">
+            <div class="section-title">
+                <i class="ph ph-check-circle"></i>
+                <span>Permissões Necessárias</span>
+            </div>
+            <div class="permission-list">
+                <div class="permission-item">
+                    <div class="permission-icon">
+                        <i class="ph ph-user-circle"></i>
+                    </div>
+                    <div class="permission-content">
+                        <div class="permission-title">Informações Básicas do Perfil</div>
+                        <div class="permission-desc">Nome de usuário e foto de perfil para identificação da conta</div>
+                    </div>
+                </div>
+                <div class="permission-item">
+                    <div class="permission-icon">
+                        <i class="ph ph-image"></i>
+                    </div>
+                    <div class="permission-content">
+                        <div class="permission-title">Visualizar Publicações</div>
+                        <div class="permission-desc">Acesso às suas publicações já realizadas no Instagram</div>
+                    </div>
+                </div>
+                <div class="permission-item">
+                    <div class="permission-icon">
+                        <i class="ph ph-upload"></i>
+                    </div>
+                    <div class="permission-content">
+                        <div class="permission-title">Publicar Conteúdo</div>
+                        <div class="permission-desc">Criar e agendar publicações (fotos, vídeos, carrosséis e stories)</div>
+                    </div>
+                </div>
+                <div class="permission-item">
+                    <div class="permission-icon">
+                        <i class="ph ph-facebook-logo"></i>
+                    </div>
+                    <div class="permission-content">
+                        <div class="permission-title">Página do Facebook</div>
+                        <div class="permission-desc">Acesso à página conectada ao Instagram Business (requerido pela Meta)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permissões que NÃO USAMOS -->
+        <div class="permissions-section">
+            <div class="section-title">
+                <i class="ph ph-x-circle"></i>
+                <span>O Que NÃO Acessamos</span>
+            </div>
+            <div class="permission-list">
+                <div class="permission-item not-used">
+                    <div class="permission-icon">
+                        <i class="ph ph-chat-circle"></i>
+                    </div>
+                    <div class="permission-content">
+                        <div class="permission-title">Mensagens Diretas</div>
+                        <div class="permission-desc">Não lemos, enviamos ou acessamos suas conversas privadas</div>
+                    </div>
+                </div>
+                <div class="permission-item not-used">
+                    <div class="permission-icon">
+                        <i class="ph ph-chat-text"></i>
+                    </div>
+                    <div class="permission-content">
+                        <div class="permission-title">Comentários</div>
+                        <div class="permission-desc">Não acessamos, lemos ou respondemos comentários</div>
+                    </div>
+                </div>
+                <div class="permission-item not-used">
+                    <div class="permission-icon">
+                        <i class="ph ph-eye"></i>
+                    </div>
+                    <div class="permission-content">
+                        <div class="permission-title">Visualizações de Stories</div>
+                        <div class="permission-desc">Não acessamos quem visualizou seus stories</div>
+                    </div>
+                </div>
+                <div class="permission-item not-used">
+                    <div class="permission-icon">
+                        <i class="ph ph-users"></i>
+                    </div>
+                    <div class="permission-content">
+                        <div class="permission-title">Lista de Seguidores</div>
+                        <div class="permission-desc">Não acessamos sua lista de seguidores ou seguindo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Uso dos Dados -->
+        <div class="data-usage">
+            <div class="section-title">
+                <i class="ph ph-shield-check"></i>
+                <span>Como Usamos Seus Dados</span>
+            </div>
+            <p><strong>Nosso aplicativo utiliza apenas:</strong></p>
+            <ul>
+                <li>Nome de usuário e foto de perfil para identificação visual</li>
+                <li>ID da conta Instagram Business para conexão técnica</li>
+                <li>Token de acesso para publicação autorizada</li>
+                <li>Metadados das publicações já existentes (data, tipo, mídia)</li>
+            </ul>
+        </div>
+
+        <!-- Compromisso de Privacidade -->
+        <div class="privacy-commitment">
+            <div class="section-title">
+                <i class="ph ph-lock"></i>
+                <span>Nosso Compromisso</span>
+            </div>
+            <p>
+                <strong>Garantimos que:</strong> Seus dados são armazenados de forma segura e criptografada. 
+                Não compartilhamos suas informações com terceiros. 
+                Você pode revogar o acesso a qualquer momento através das configurações do Instagram. 
+                Cumprimos todas as diretrizes da Meta e LGPD.
+            </p>
+        </div>
 
         <button class="btn-connect" id="connectBtn" onclick="startAuth()">
-            <span>🔐</span>
-            <span>Conectar Instagram Business</span>
+            <i class="ph-fill ph-lock-key"></i>
+            <span>Autorizar Conexão Segura</span>
         </button>
 
         <div class="status-box" id="statusBox"></div>
@@ -223,20 +569,8 @@
             <div class="profile-id" id="profileId"></div>
         </div>
 
-        <div class="info-card">
-            <h3>O que acontece ao conectar?</h3>
-            <ul>
-                <li>Você fará login com Facebook/Instagram</li>
-                <li>Autorizará o acesso às suas páginas</li>
-                <li>Sua conta será vinculada automaticamente</li>
-                <li>Você poderá agendar e publicar posts</li>
-            </ul>
-        </div>
-
-        <div class="admin-panel">
-            <div class="admin-title">Administração</div>
-            <button class="btn-admin" onclick="viewAllClients()">👥 Ver Clientes</button>
-            <button class="btn-admin" onclick="testConnection()">🔧 Testar Conexão</button>
+        <div class="footer">
+            <p>Sistema desenvolvido com segurança e transparência</p>
         </div>
     </div>
 
@@ -256,15 +590,12 @@
             const error = urlParams.get('error');
 
             if (error) {
-                showStatus('error', '❌ Autorização cancelada pelo usuário.');
+                showStatus('error', 'Autorização cancelada pelo usuário.');
                 return;
             }
 
             if (code) {
-                // Limpar URL
                 window.history.replaceState({}, document.title, window.location.pathname);
-                
-                // Processar automaticamente
                 await processAuthorization(code);
             }
         };
@@ -292,7 +623,6 @@
                 showStatus('loading', 'Processando autorização...');
                 disableButton();
 
-                // Passo 1: Trocar code por access token
                 showStatus('loading', 'Obtendo token de acesso...');
                 const tokenUrl = `https://graph.facebook.com/v21.0/oauth/access_token?` +
                     `client_id=${APP_ID}` +
@@ -309,7 +639,6 @@
 
                 const userToken = tokenData.access_token;
 
-                // Passo 2: Obter páginas do usuário
                 showStatus('loading', 'Buscando páginas do Facebook...');
                 const pagesResponse = await fetch(
                     `https://graph.facebook.com/v21.0/me/accounts?access_token=${userToken}`
@@ -320,11 +649,9 @@
                     throw new Error('Nenhuma página do Facebook encontrada. Você precisa de uma página conectada a uma conta Instagram Business.');
                 }
 
-                // Pegar primeira página (ou você pode deixar o usuário escolher)
                 const page = pagesData.data[0];
                 const pageAccessToken = page.access_token;
 
-                // Passo 3: Obter Instagram Business Account da página
                 showStatus('loading', 'Buscando conta Instagram Business...');
                 const igResponse = await fetch(
                     `https://graph.facebook.com/v21.0/${page.id}?fields=instagram_business_account&access_token=${pageAccessToken}`
@@ -337,14 +664,12 @@
 
                 const igAccountId = igData.instagram_business_account.id;
 
-                // Passo 4: Obter informações do perfil Instagram
                 showStatus('loading', 'Obtendo informações do perfil...');
                 const profileResponse = await fetch(
                     `https://graph.facebook.com/v21.0/${igAccountId}?fields=username,profile_picture_url&access_token=${pageAccessToken}`
                 );
                 const profileData = await profileResponse.json();
 
-                // Passo 5: Converter para Long-Lived Token (dura 60 dias)
                 showStatus('loading', 'Gerando token de longa duração...');
                 const longTokenUrl = `https://graph.facebook.com/v21.0/oauth/access_token?` +
                     `grant_type=fb_exchange_token` +
@@ -357,11 +682,9 @@
 
                 const finalToken = longTokenData.access_token || pageAccessToken;
                 
-                // Calcular data de validade (60 dias)
                 const validadeToken = new Date();
                 validadeToken.setDate(validadeToken.getDate() + 60);
 
-                // Passo 6: Salvar no Supabase
                 showStatus('loading', 'Salvando dados no banco...');
                 await saveToSupabase({
                     users: profileData.username,
@@ -371,20 +694,17 @@
                     validade_token: validadeToken.toISOString()
                 });
 
-                // Sucesso!
                 showStatus('success', 
-                    `🎉 <strong>Conectado com sucesso!</strong><br><br>` +
+                    `<strong>Conectado com sucesso!</strong><br><br>` +
                     `Conta: @${profileData.username}<br>` +
                     `Token válido até: ${validadeToken.toLocaleDateString('pt-BR')}`
                 );
 
-                // Mostrar informações do perfil
                 showProfile(profileData.username, profileData.profile_picture_url, igAccountId);
-
                 enableButton();
 
             } catch (error) {
-                showStatus('error', `❌ <strong>Erro:</strong><br>${error.message}`);
+                showStatus('error', `<strong>Erro:</strong><br>${error.message}`);
                 enableButton();
             }
         }
@@ -402,7 +722,6 @@
             });
 
             if (!response.ok) {
-                // Se já existe, fazer UPDATE
                 if (response.status === 409) {
                     const updateResponse = await fetch(
                         `${SUPABASE_URL}/rest/v1/client?id_instagram=eq.${data.id_instagram}`,
@@ -434,9 +753,13 @@
             let icon = '';
             if (type === 'loading') {
                 icon = '<span class="spinner"></span>';
+            } else if (type === 'success') {
+                icon = '<i class="ph-fill ph-check-circle"></i>';
+            } else if (type === 'error') {
+                icon = '<i class="ph-fill ph-x-circle"></i>';
             }
             
-            statusBox.innerHTML = icon + message;
+            statusBox.innerHTML = icon + '<div>' + message + '</div>';
         }
 
         function showProfile(username, photoUrl, igId) {
@@ -455,54 +778,8 @@
         function enableButton() {
             const btn = document.getElementById('connectBtn');
             btn.disabled = false;
-            btn.innerHTML = '<span>🔐</span><span>Conectar Instagram Business</span>';
-        }
-
-        // Funções administrativas
-        async function viewAllClients() {
-            try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/client?select=*`, {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                });
-
-                const clients = await response.json();
-                
-                let html = '<strong>👥 Clientes Cadastrados:</strong><br><br>';
-                clients.forEach(client => {
-                    html += `@${client.users} - ID: ${client.id_instagram}<br>`;
-                    html += `Token válido até: ${new Date(client.validade_token).toLocaleDateString('pt-BR')}<br><br>`;
-                });
-
-                showStatus('success', html);
-            } catch (error) {
-                showStatus('error', 'Erro ao buscar clientes: ' + error.message);
-            }
-        }
-
-        async function testConnection() {
-            showStatus('loading', 'Testando conexão com Supabase...');
-            
-            try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/client?select=count`, {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                });
-
-                if (response.ok) {
-                    showStatus('success', '✅ Conexão com Supabase funcionando perfeitamente!');
-                } else {
-                    showStatus('error', '❌ Erro na conexão com Supabase');
-                }
-            } catch (error) {
-                showStatus('error', 'Erro de rede: ' + error.message);
-            }
+            btn.innerHTML = '<i class="ph-fill ph-lock-key"></i><span>Autorizar Conexão Segura</span>';
         }
     </script>
 </body>
 </html>
-
